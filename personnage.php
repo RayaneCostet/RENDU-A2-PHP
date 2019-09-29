@@ -4,15 +4,20 @@ require __DIR__ . "/vendor/autoload.php";
 ## ETAPE 0
 
 ## CONNECTEZ VOUS A VOTRE BASE DE DONNEE
+$pdo = new PDO('mysql:host=127.0.0.1;dbname=PHP', "root", "");
 
 ## ETAPE 1
 
 ## RECUPERER TOUT LES PERSONNAGES CONTENU DANS LA TABLE personnages
+$query = $pdo->prepare("SELECT * FROM personnages ORDER BY id DESC ");
+$query->execute();
+$array = $query->fetchAll(PDO::FETCH_OBJ);
 
 ## ETAPE 2
 
 ## LES AFFICHERS DANS LE HTML
 ## AFFICHER SON NOM, SON ATK, SES PV, SES STARS
+
 
 ## ETAPE 3
 
@@ -50,6 +55,13 @@ require __DIR__ . "/vendor/autoload.php";
 <div class="w-100 mt-5">
 
 </div>
-
+<?php
+foreach ($array as $item) {
+    echo $item->name . "<br>";
+    echo $item->atk . "<br>";
+    echo $item->pv . "<br>";
+    echo $item->stars . "<br>";
+}
+?>
 </body>
 </html>

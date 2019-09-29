@@ -1,10 +1,9 @@
 <?php
 require __DIR__ . "/vendor/autoload.php";
-
 ## ETAPE 0
 
 ## CONNECTEZ VOUS A VOTRE BASE DE DONNEE
-
+$pdo = new PDO('mysql:host=127.0.0.1;dbname=php', "root", "");
 ### ETAPE 1
 
 ####CREE UNE BASE DE DONNEE AVEC UNE TABLE PERSONNAGE, UNE TABLE TYPE
@@ -38,11 +37,23 @@ require __DIR__ . "/vendor/autoload.php";
 
 # AFFICHER DANS LE SELECTEUR (<select name="" id="">) tout les types qui sont disponible (cad tout les type contenu dans la table types)
 
+$query = $pdo->prepare("SELECT * FROM types ORDER BY id DESC ");
+$query->execute();
+$array = $query->fetchAll(PDO::FETCH_OBJ);
 
 #######################
 ## ETAPE 4
 
 # ENREGISTRER EN BASE DE DONNEE LE PERSONNAGE, AVEC LE BON TYPE ASSOCIER
+if (!empty($_POST)) {
+    $name = $_POST['nom'];
+    $atk = $_POST['atk'];
+    $type = $_POST['type'];
+    $pv = $_POST['pv'];
+        $query = $pdo->prepare("INSERT INTO personnages (name, atk, pv, type_id) VALUES (:name, :atk, :pv, :type) ");
+        $query->execute(["name" => $name, "atk" => $atk, "pv" => $pv, "type" => $type]);
+}
+
 
 #######################
 ## ETAPE 5
@@ -53,6 +64,7 @@ require __DIR__ . "/vendor/autoload.php";
 
 # ENREGISTRER 5 / 6 PERSONNAGE DIFFERENT
 
+?>
 ?>
 
 
@@ -78,25 +90,35 @@ require __DIR__ . "/vendor/autoload.php";
     <form action="" method="POST" class="form-group">
         <div class="form-group col-md-4">
             <label for="">Nom du personnage</label>
-            <input type="text" class="form-control" placeholder="Nom">
+            <input type="text" name="nom" class="form-control" placeholder="Nom">
         </div>
 
         <div class="form-group col-md-4">
             <label for="">Attaque du personnage</label>
-            <input type="text" class="form-control" placeholder="Atk">
+            <input type="text" name="atk" class="form-control" placeholder="Atk">
         </div>
         <div class="form-group col-md-4">
             <label for="">Pv du personnage</label>
-            <input type="text" class="form-control" placeholder="Pv">
+            <input type="text" name="pv" class="form-control" placeholder="Pv">
         </div>
         <div class="form-group col-md-4">
             <label for="">Type</label>
-            <select name="" id="">
+            <select name="type" id="">
                 <option value="" selected disabled>Choissisez un type</option>
+                <?php foreach ($array as $type) { ?>
+                    <option value="<?= $type->ID ?>"><?= $type->name ?> </option>
+                <?php } ?>
+
             </select>
         </div>
         <button class="btn btn-primary">Enregistrer</button>
     </form>
+    <?php
+    if (!empty($_POST)) {
+        $name = $_POST['nom'];
+        echo "PERSONNAGE" .$name. "CREER";
+    }
+    ?>
 </div>
 
 </body>
